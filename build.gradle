@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+group = 'com.ringcentral.platform'
+version = '1.0.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+
+    compile group: 'com.netflix.hystrix', name: 'hystrix-core', version: '1.5.5'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+}
+
+buildscript {
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "net.researchgate:gradle-release:2.4.0"
+    }
+}
+
