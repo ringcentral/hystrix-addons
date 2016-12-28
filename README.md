@@ -1,5 +1,8 @@
 # Useful Hystrix addons
 
+
+[![][travis img]][travis]
+
 1. **ComposedHystrixMetricsPublisher**
 
 According to Hystrix specification it is possible to register only one plugin of every type. This class is supposed to avoid this limitation and register list of plugins.
@@ -26,3 +29,6 @@ Example:
     aggregatedStream.observe().map(<...>).filter(<...>);
 
 ```
+
+[travis]:https://travis-ci.org/RC-Platform-Disco-Team/hystrix-addons
+[travis img]:https://api.travis-ci.org/RC-Platform-Disco-Team/hystrix-addons.svg?branch=master
