@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Listener that notifies all the listeners about initialization of new command
+ *
  * {@link #addListener(HystrixMetricsInitializationListener)} are not thread-safe
  */
 public class HystrixMetricsInitializationNotifier extends HystrixMetricsPublisher {
