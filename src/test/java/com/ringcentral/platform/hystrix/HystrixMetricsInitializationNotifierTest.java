@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.netflix.hystrix.HystrixEventType.FAILURE;
 import static com.netflix.hystrix.HystrixEventType.SUCCESS;
@@ -26,7 +29,6 @@ public class HystrixMetricsInitializationNotifierTest {
     private final static HystrixCommandGroupKey GROUP_KEY = HystrixCommandGroupKey.Factory.asKey("Util");
     private final static HystrixCommandKey COMMAND_1 = HystrixCommandKey.Factory.asKey("Command1");
     private final static HystrixCommandKey COMMAND_2 = HystrixCommandKey.Factory.asKey("Command2");
-
 
     private List<HystrixMetricsInitializationListener> mocks = new ArrayList<HystrixMetricsInitializationListener>(){{
         add(mock(HystrixMetricsInitializationListener.class));
@@ -47,7 +49,7 @@ public class HystrixMetricsInitializationNotifierTest {
     }
 
     @Test
-    public void test() {
+    public void checkNotifierIsCalledOnceForEveryCommand() {
         mocks.forEach(m -> doAnswer(a -> {
             HystrixCommandMetrics metrics = a.getArgument(0);
             log.info("initialize for command {} and group {}", metrics.getCommandKey().name(), metrics.getCommandGroup().name());
@@ -57,7 +59,7 @@ public class HystrixMetricsInitializationNotifierTest {
 
         HystrixPlugins.getInstance().registerMetricsPublisher(notifier);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             HystrixCommand<Integer> cmd = Command.from(GROUP_KEY, COMMAND_1, SUCCESS, 50);
             cmd.observe();
         }
@@ -92,6 +94,53 @@ public class HystrixMetricsInitializationNotifierTest {
         public boolean matches(HystrixCommandMetrics arg) {
             return (keyValue == null || arg.getCommandKey() == keyValue)
                     && (groupValue == null || arg.getCommandGroup() == groupValue);
+        }
+    }
+
+    @Test
+    public void concurrentTest() throws Throwable {
+        HystrixMetricsInitializationNotifier notifier = new HystrixMetricsInitializationNotifier();
+        HystrixPlugins.getInstance().registerMetricsPublisher(notifier);
+        runMultiThreaded(10, () -> {
+            try {
+                HystrixCommand<Integer> cmd = Command.from(GROUP_KEY, COMMAND_1, SUCCESS, 50);
+                cmd.observe();
+
+                TimeUnit.MILLISECONDS.sleep(new Random().nextInt(100));
+                notifier.addListener(mock(HystrixMetricsInitializationListener.class));
+                TimeUnit.MILLISECONDS.sleep(new Random().nextInt(100));
+
+                HystrixCommand<Integer> cmd2 = Command.from(GROUP_KEY, COMMAND_2, SUCCESS, 50);
+                cmd2.observe();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
+    private void runMultiThreaded(int threadsCount, Runnable r) throws Throwable {
+        final AtomicReference<Throwable> exception = new AtomicReference<>();
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < threadsCount; i++) {
+            Thread t = new Thread(r);
+            t.setUncaughtExceptionHandler((t1, e) -> exception.set(e));
+            threads.add(t);
+        }
+
+        // start them
+        threads.forEach(Thread::start);
+
+        // wait for them to finish
+        threads.forEach( t -> {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if (exception.get() != null) {
+            throw exception.get();
         }
     }
 }
