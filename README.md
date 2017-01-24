@@ -30,5 +30,5 @@
 
     ```
 
-[travis]:https://travis-ci.org/RC-Platform-Disco-Team/hystrix-addons
-[travis img]:https://api.travis-ci.org/RC-Platform-Disco-Team/hystrix-addons.svg?branch=master
+[travis]:https://travis-ci.org/ringcentral/hystrix-addons
+[travis img]:https://travis-ci.org/ringcentral/hystrix-addons.svg?branch=develop
