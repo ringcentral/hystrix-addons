@@ -13,15 +13,17 @@ import rx.subjects.Subject;
 
 import java.util.function.Predicate;
 
-public class HystrixAggregatedEventStream implements HystrixMetricsInitializationListener, HystrixEventStream<HystrixCommandCompletion> {
+/**
+ * Rx-Java event stream that aggregates all events for all commands and dynamically adds new type of events during it's work
+ */
+public class AggregatedHystrixCommandCompletionStream implements HystrixMetricsInitializationListener, HystrixEventStream<HystrixCommandCompletion> {
 
-    private static final Logger log = LoggerFactory.getLogger(HystrixAggregatedEventStream.class);
+    private static final Logger log = LoggerFactory.getLogger(AggregatedHystrixCommandCompletionStream.class);
     private final Predicate<HystrixCommandMetrics> filter;
     private final Subject<Observable<HystrixCommandCompletion>, Observable<HystrixCommandCompletion>> streams;
     private final Observable<HystrixCommandCompletion> aggregatedStream;
 
-
-    public HystrixAggregatedEventStream(HystrixMetricsInitializationNotifier notifier, Predicate<HystrixCommandMetrics> filter) {
+    public AggregatedHystrixCommandCompletionStream(HystrixMetricsInitializationNotifier notifier, Predicate<HystrixCommandMetrics> filter) {
         this.filter = filter;
         streams = PublishSubject.<Observable<HystrixCommandCompletion>>create().toSerialized();
         aggregatedStream = Observable.merge(streams).share();
