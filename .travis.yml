@@ -6,7 +6,10 @@ jdk:
 
 script:
   - ./gradlew --info check
-  
+  - ./gradlew codeCoverageReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
   
 notifications:
   email: false

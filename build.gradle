@@ -3,7 +3,8 @@ plugins {
     id 'idea'
     id 'maven'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.7.3"
+    id 'com.jfrog.bintray' version '1.7.3'
+    id 'jacoco'
 }
 
 group = 'com.ringcentral.platform'
@@ -70,6 +71,17 @@ bintray {
             vcsTag = 'v1.0.0'
         }
     }
+}
 
+task codeCoverageReport(type: JacocoReport) {
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
+    sourceSets sourceSets.main
+
+    reports {
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
+        csv.enabled false
+    }
 }

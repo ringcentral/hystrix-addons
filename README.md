@@ -3,6 +3,7 @@
 
 [![][travis img]][travis]
 [ ![Download][bintray img]][bintray]
+[![codecov][codecov img]][codecov]
 
 1. **ComposedHystrixMetricsPublisher**
 
@@ -35,4 +36,8 @@
 [travis img]:https://travis-ci.org/ringcentral/hystrix-addons.svg?branch=develop
 [bintray]:https://bintray.com/ringcentral/maven/com.ringcentral.platform%3Ahystrix-addons/_latestVersion
 [bintray img]:https://api.bintray.com/packages/ringcentral/maven/com.ringcentral.platform%3Ahystrix-addons/images/download.svg
+[codecov]:https://codecov.io/gh/ringcentral/hystrix-addons
+[codecov img]:https://codecov.io/gh/ringcentral/hystrix-addons/branch/develop/graph/badge.svg
+
+
 
