@@ -1,5 +1,10 @@
-apply plugin: 'java'
-apply plugin: 'idea'
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven'
+    id 'maven-publish'
+    id "com.jfrog.bintray" version "1.7.3"
+}
 
 group = 'com.ringcentral.platform'
 version = '1.1.0-SNAPSHOT'
@@ -19,17 +24,52 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.5.0'
 }
 
-buildscript {
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
 
-    repositories {
-        mavenLocal()
-        maven {
-            url "https://plugins.gradle.org/m2/"
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        Mvn(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId "$project.group"
+            artifactId "$project.name"
+            version "$project.version"
         }
-    }
-
-    dependencies {
-        classpath "net.researchgate:gradle-release:2.4.0"
     }
 }
 
+bintray {
+    user = hasProperty('user') ? property('user') : ''
+    key = hasProperty('key') ? property('key') : ''
+    publications = ['Mvn']
+    publish = true
+    override = true
+    pkg {
+        repo = 'maven'
+        name = "$project.group:$project.name"
+        userOrg = 'ringcentral'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/ringcentral/hystrix-addons.git'
+        publicDownloadNumbers = true
+        githubRepo = 'ringcentral/hystrix-addons'
+        githubReleaseNotesFile = 'README.md'
+        websiteUrl = 'https://github.com/ringcentral/hystrix-addons'
+        issueTrackerUrl = 'https://github.com/ringcentral/hystrix-addons/issues'
+        version {
+            name = '1.0.0'
+            desc = 'Hystrix-addons by Ringcentral, Inc. 1.0.0'
+            vcsTag = 'v1.0.0'
+        }
+    }
+
+
+}
