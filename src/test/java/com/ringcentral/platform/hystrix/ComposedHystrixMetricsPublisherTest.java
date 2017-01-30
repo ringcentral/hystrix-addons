@@ -38,6 +38,7 @@ public class ComposedHystrixMetricsPublisherTest {
                 HystrixMetricsPublisherFactory.createOrRetrievePublisherForCommand(TestCommandKey.COMMAND_A, null, null, null, null);
                 HystrixMetricsPublisherFactory.createOrRetrievePublisherForCommand(TestCommandKey.COMMAND_B, null, null, null, null);
                 HystrixMetricsPublisherFactory.createOrRetrievePublisherForThreadPool(TestThreadPoolKey.THREAD_POOL_A, null, null);
+                HystrixMetricsPublisherFactory.createOrRetrievePublisherForCollapser(TestCollapserKey.COLLAPSER_A, null, null);
             }));
         }
 
@@ -56,12 +57,14 @@ public class ComposedHystrixMetricsPublisherTest {
         // we should see 2 commands and 1 threadPool publisher created
         assertEquals(2, publisher.commandCounter.get());
         assertEquals(1, publisher.threadCounter.get());
+        assertEquals(1, publisher.threadCounter.get());
     }
 
     private static class TestHystrixMetricsPublisher extends HystrixMetricsPublisher {
 
         AtomicInteger commandCounter = new AtomicInteger();
         AtomicInteger threadCounter = new AtomicInteger();
+        AtomicInteger collapserCounter = new AtomicInteger();
 
         @Override
         public HystrixMetricsPublisherCommand getMetricsPublisherForCommand(HystrixCommandKey commandKey, HystrixCommandGroupKey commandOwner, HystrixCommandMetrics metrics, HystrixCircuitBreaker circuitBreaker, HystrixCommandProperties properties) {
@@ -73,6 +76,10 @@ public class ComposedHystrixMetricsPublisherTest {
             return threadCounter::incrementAndGet;
         }
 
+        @Override
+        public HystrixMetricsPublisherCollapser getMetricsPublisherForCollapser(HystrixCollapserKey collapserKey, HystrixCollapserMetrics metrics, HystrixCollapserProperties properties) {
+            return collapserCounter::incrementAndGet;
+        }
     }
 
     private enum TestCommandKey implements HystrixCommandKey {
@@ -83,6 +90,9 @@ public class ComposedHystrixMetricsPublisherTest {
         THREAD_POOL_A
     }
 
+    private enum TestCollapserKey implements HystrixCollapserKey {
+        COLLAPSER_A
+    }
 
     private static class DummyPublisher extends HystrixMetricsPublisher {
 
