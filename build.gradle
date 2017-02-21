@@ -3,11 +3,12 @@ plugins {
     id 'idea'
     id 'maven'
     id 'maven-publish'
-    id "com.jfrog.bintray" version "1.7.3"
+    id 'com.jfrog.bintray' version '1.7.3'
+    id 'jacoco'
 }
 
 group = 'com.ringcentral.platform'
-version = '1.0.0'
+version = '1.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -48,8 +49,8 @@ publishing {
 }
 
 bintray {
-    user = hasProperty('user') ? property('user') : ''
-    key = hasProperty('key') ? property('key') : ''
+    user = project.hasProperty('user') ? property('user') : 'user'
+    key = project.hasProperty('key') ? property('key') : 'key'
     publications = ['Mvn']
     publish = true
     override = true
@@ -65,11 +66,23 @@ bintray {
         websiteUrl = 'https://github.com/ringcentral/hystrix-addons'
         issueTrackerUrl = 'https://github.com/ringcentral/hystrix-addons/issues'
         version {
-            name = '1.0.0'
-            desc = 'Hystrix-addons by Ringcentral, Inc. 1.0.0'
-            vcsTag = 'v1.0.0'
+            name = project.version
+            desc = "Hystrix-addons by Ringcentral, Inc. ${project.version}"
+            vcsTag = "v${project.version}"
         }
     }
+}
 
+task codeCoverageReport(type: JacocoReport) {
 
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    sourceSets sourceSets.main
+
+    reports {
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
+        csv.enabled false
+    }
 }

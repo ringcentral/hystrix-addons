@@ -35,9 +35,11 @@ public class HystrixMetricsInitializationNotifierTest {
         add(mock(HystrixMetricsInitializationListener.class));
         add(mock(HystrixMetricsInitializationListener.class));
     }};
+
     private List<HystrixMetricsInitializationListener> listeners = new ArrayList<HystrixMetricsInitializationListener>(){{
         addAll(mocks);
     }};
+
     private HystrixMetricsInitializationNotifier notifier = new HystrixMetricsInitializationNotifier(){{
         listeners.forEach(this::addListener);
     }};
@@ -60,13 +62,11 @@ public class HystrixMetricsInitializationNotifierTest {
         HystrixPlugins.getInstance().registerMetricsPublisher(notifier);
 
         for (int i = 0; i < 3; i++) {
-            HystrixCommand<Integer> cmd = Command.from(GROUP_KEY, COMMAND_1, SUCCESS, 50);
-            cmd.observe();
+            Command.from(GROUP_KEY, COMMAND_1, SUCCESS, 50).observe();
         }
 
         for (int i = 0; i < 5; i++) {
-            HystrixCommand<Integer> cmd = Command.from(GROUP_KEY, COMMAND_2, FAILURE, 60);
-            cmd.observe();
+            Command.from(GROUP_KEY, COMMAND_2, FAILURE, 60).observe();
         }
 
         mocks.forEach(m -> {
