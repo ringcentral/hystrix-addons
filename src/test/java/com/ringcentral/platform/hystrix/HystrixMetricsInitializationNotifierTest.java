@@ -6,6 +6,7 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -30,19 +31,16 @@ public class HystrixMetricsInitializationNotifierTest {
     private final static HystrixCommandKey COMMAND_1 = HystrixCommandKey.Factory.asKey("Command1");
     private final static HystrixCommandKey COMMAND_2 = HystrixCommandKey.Factory.asKey("Command2");
 
-    private List<HystrixMetricsInitializationListener> mocks = new ArrayList<HystrixMetricsInitializationListener>(){{
-        add(mock(HystrixMetricsInitializationListener.class));
-        add(mock(HystrixMetricsInitializationListener.class));
-        add(mock(HystrixMetricsInitializationListener.class));
-    }};
+    private static List<HystrixMetricsInitializationListener> mocks = new ArrayList<>();
+    private static HystrixMetricsInitializationNotifier notifier = new HystrixMetricsInitializationNotifier();
 
-    private List<HystrixMetricsInitializationListener> listeners = new ArrayList<HystrixMetricsInitializationListener>(){{
-        addAll(mocks);
-    }};
-
-    private HystrixMetricsInitializationNotifier notifier = new HystrixMetricsInitializationNotifier(){{
-        listeners.forEach(this::addListener);
-    }};
+    @BeforeClass
+    public static void init() {
+        mocks.add(mock(HystrixMetricsInitializationListener.class));
+        mocks.add(mock(HystrixMetricsInitializationListener.class));
+        mocks.add(mock(HystrixMetricsInitializationListener.class));
+        mocks.forEach(l -> notifier.addListener(l));
+    }
 
     @Before
     public void reset() {
@@ -112,14 +110,14 @@ public class HystrixMetricsInitializationNotifierTest {
 
                 HystrixCommand<Integer> cmd2 = Command.from(GROUP_KEY, COMMAND_2, SUCCESS, 50);
                 cmd2.observe();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                // do nothing
             }
         });
 
     }
 
-    private void runMultiThreaded(int threadsCount, Runnable r) throws Throwable {
+    private void runMultiThreaded(@SuppressWarnings("SameParameterValue") int threadsCount, Runnable r) throws Throwable {
         final AtomicReference<Throwable> exception = new AtomicReference<>();
         ArrayList<Thread> threads = new ArrayList<>();
         for (int i = 0; i < threadsCount; i++) {
@@ -136,7 +134,7 @@ public class HystrixMetricsInitializationNotifierTest {
             try {
                 t.join();
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                // do nothing
             }
         });
         if (exception.get() != null) {
