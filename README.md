@@ -4,8 +4,6 @@
 [![Download][bintray img]][bintray]
 [![codecov][codecov img]][codecov]
 [![Codacy][codacy img]][codacy]
-
-
 [![][license img]][license]
 
 

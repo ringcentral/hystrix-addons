@@ -13,9 +13,22 @@ script:
   - ./gradlew --info check
   - ./gradlew codeCoverageReport
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - ~/jpm/bin/codacy-coverage-reporter -l Java -r build/reports/jacoco/report.xml
 
 notifications:
   email: false
+
+cache:
+  directories:
+  - $HOME/.gradle
