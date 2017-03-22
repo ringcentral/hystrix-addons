@@ -1,11 +1,11 @@
 # Useful Hystrix addons
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d48232b8c6014ef99f420b06df8f5e27)](https://www.codacy.com/app/mskonovalov/hystrix-addons?utm_source=github.com&utm_medium=referral&utm_content=ringcentral/hystrix-addons&utm_campaign=badger)
-
-
-[![][travis img]][travis]
+[![Travis CI][travis img]][travis]
 [![Download][bintray img]][bintray]
 [![codecov][codecov img]][codecov]
+[![Codacy][codacy img]][codacy]
+
+
 [![][license img]][license]
 
 
@@ -42,6 +42,8 @@
 [bintray img]:https://api.bintray.com/packages/ringcentral/maven/com.ringcentral.platform%3Ahystrix-addons/images/download.svg
 [codecov]:https://codecov.io/gh/ringcentral/hystrix-addons
 [codecov img]:https://codecov.io/gh/ringcentral/hystrix-addons/branch/develop/graph/badge.svg
+[codacy]:https://www.codacy.com/app/mskonovalov/hystrix-addons?utm_source=github.com&utm_medium=referral&utm_content=ringcentral/hystrix-addons&utm_campaign=badger
+[codacy img]:https://api.codacy.com/project/badge/Grade/d48232b8c6014ef99f420b06df8f5e27
 [license]:LICENSE
 [license img]:https://img.shields.io/badge/License-MIT-blue.svg
 
