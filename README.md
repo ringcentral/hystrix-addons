@@ -1,5 +1,7 @@
 # Useful Hystrix addons
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d48232b8c6014ef99f420b06df8f5e27)](https://www.codacy.com/app/mskonovalov/hystrix-addons?utm_source=github.com&utm_medium=referral&utm_content=ringcentral/hystrix-addons&utm_campaign=badger)
+
 
 [![][travis img]][travis]
 [![Download][bintray img]][bintray]
